@@ -5,9 +5,9 @@
           <h5 class="text-uppercase text-center">Login</h5>
           <br><br>
           <form>
-            <ul >
-              <p class="text-center">
-              
+            <ul class="alert alert-danger" v-if="errors.length > 0">
+              <p class="text-center" v-for="error in errors" :key="errors.indexOf(error)">
+                {{ error }}
               </p>
             </ul>
             <div class="form-group">
@@ -29,7 +29,7 @@
             </div>
 
             <div class="form-group"> <!-- computed property er kono kisu k method akare lekha jabena that means () eta use kora jabena-->
-              <button class="btn btn-bold btn-block btn-primary" :disabled="!isValidLoginForm"  type="button">Login</button>
+              <button class="btn btn-bold btn-block btn-primary" @click="attemptLogin()" :disabled="!isValidLoginForm"  type="button">Login</button>
             </div>
           </form>
           <p class="text-center text-muted fs-13 mt-20">Don't have an account? <a href="page-register.html">Sign up</a></p>
@@ -39,12 +39,15 @@
 </template>
 
 <script>
+ import axios from 'axios'
     export default {
         data(){
             return{
                 email:'',
                 password:'',
                 remember:true,
+                loading: false,
+                errors: []
             }
         },
 
@@ -55,11 +58,27 @@
             } else { 
               return false 
             }
-          }
           },
+          attemptLogin(){
+              this.errors=[];
+              this.loading=true;
+              axios.post('/login',{email:this.email,password:this.password,remeber:this.remember})
+              .then( response =>{
+                 location.reload();
+              }).catch( error=>{
+                  this.loading= false;
+                  if(error.response.status==422){
+                      this.errors.push("We couldn't verify your account details");
+                  }else{
+                      this.errors.push("Something went wrong! refresh and try again");
+                  }
+              });
+          }
+
+        },
         computed:{
             isValidLoginForm(){
-                return this.emailIsValid() && this.password;
+                return this.emailIsValid() && this.password && !this.loading;
             }
         },
         mounted() {

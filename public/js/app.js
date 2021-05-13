@@ -1845,6 +1845,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -1885,12 +1887,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       email: '',
       password: '',
-      remember: true
+      remember: true,
+      loading: false,
+      errors: []
     };
   },
   methods: {
@@ -1900,11 +1905,32 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         return false;
       }
+    },
+    attemptLogin: function attemptLogin() {
+      var _this = this;
+
+      this.errors = [];
+      this.loading = true;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/login', {
+        email: this.email,
+        password: this.password,
+        remeber: this.remember
+      }).then(function (response) {
+        location.reload();
+      })["catch"](function (error) {
+        _this.loading = false;
+
+        if (error.response.status == 422) {
+          _this.errors.push("We couldn't verify your account details");
+        } else {
+          _this.errors.push("Something went wrong! refresh and try again");
+        }
+      });
     }
   },
   computed: {
     isValidLoginForm: function isValidLoginForm() {
-      return this.emailIsValid() && this.password;
+      return this.emailIsValid() && this.password && !this.loading;
     }
   },
   mounted: function mounted() {
@@ -37479,7 +37505,27 @@ var render = function() {
             _c("br"),
             _vm._v(" "),
             _c("form", [
-              _vm._m(0),
+              _vm.errors.length > 0
+                ? _c(
+                    "ul",
+                    { staticClass: "alert alert-danger" },
+                    _vm._l(_vm.errors, function(error) {
+                      return _c(
+                        "p",
+                        {
+                          key: _vm.errors.indexOf(error),
+                          staticClass: "text-center"
+                        },
+                        [
+                          _vm._v(
+                            "\n             " + _vm._s(error) + "\n           "
+                          )
+                        ]
+                      )
+                    }),
+                    0
+                  )
+                : _vm._e(),
               _vm._v(" "),
               _c("div", { staticClass: "form-group" }, [
                 _c("input", {
@@ -37592,14 +37638,19 @@ var render = function() {
                   "button",
                   {
                     staticClass: "btn btn-bold btn-block btn-primary",
-                    attrs: { disabled: !_vm.isValidLoginForm, type: "button" }
+                    attrs: { disabled: !_vm.isValidLoginForm, type: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.attemptLogin()
+                      }
+                    }
                   },
                   [_vm._v("Login")]
                 )
               ])
             ]),
             _vm._v(" "),
-            _vm._m(1)
+            _vm._m(0)
           ]
         )
       ])
@@ -37607,12 +37658,6 @@ var render = function() {
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("ul", [_c("p", { staticClass: "text-center" })])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -49798,6 +49843,18 @@ Vue.compile = compileToFunctions;
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	

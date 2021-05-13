@@ -37,7 +37,13 @@
         <div class="topbar-right">
           <ul class="topbar-nav nav">
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            @if(auth()->check())
+              Hey {{ auth()->user()->name }}
+            @else
             <li class="nav-item"><a class="nav-link" href="javascript:;" data-toggle="modal" data-target="#loginModal">Login</a></li>
+            @endif
+
+
             {{-- @auth
                 @admin 
                   <li class="nav-item"><a href=" " class="nav-link">All series</a></li>
@@ -86,8 +92,10 @@
     <!-- END Main container -->
 
 
-
-     <login-component></login-component> 
+  @if(!auth()->check())
+  <login-component></login-component> 
+  @endif
+   
     {{-- <vue-noty></vue-noty>
     @guest
         <vue-login></vue-login>

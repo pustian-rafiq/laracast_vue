@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+ 
+use App\Exceptions\AuthFailedException;
+
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -47,7 +50,22 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        return 'Successfully login';
+        session()->flash('success','Successfully logged in.');
+        return  response()->json([
+            'status' => 'OK'
+        ]);
+    }
+
+    
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        throw new AuthFailedException;
     }
 
 }
